@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/img/favicon.ico"/>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" type="text/css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+
+    <!-- Custom styles for this template -->
+
+    <link rel="stylesheet" type="text/css"
+          href="/css/bootstrap-table.css" th:href="@{/css/bootstrap-table.min.css}"/>
+
+    <link rel="stylesheet" type="text/css"
+          href="/css/bootstrap-table-filter-control.css"
+          th:href="@{/css/bootstrap-table-filter-control.css}"/>
+    <link href="/css/bootstrap-editable.css" type="text/css"
+          rel="stylesheet" th:href="@{/css/bootstrap-editable.css}"/>
+    <!-- Optional theme-->
+    <link rel="stylesheet" type="text/css"
+          href="/css/bootstrap-theme.min.css" th:href="@{/css/bootstrap-theme.min.css}"/>
+    <link rel="stylesheet" type="text/css" href="/css/datetimepicker.css" th:href="@{/css/datetimepicker.css}"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrapValidator.css" th:href="@{/css/bootstrapValidator.css}"/>
+    <title>样衣管理系统</title>
+</head>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap/bootstrap.min.js"></script>
+<script src="/js/bootstrap/bootstrap-table.js"></script>
+<script src="/js/bootstrap/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="/js/bootstrap/bootstrap-table-filter-control.js"></script>
+<script src="/js/bootstrap/bootstrap-editable.js"></script>
+<script src="/js/bootstrap/bootstrap-table-editable.js"></script>
+<script src="/js/bootstrap/bootstrap-datetimepicker.js"></script>
+<script src="/js/bootstrap/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="/js/bootstrap/bootstrapValidator.js"></script>
+<body>
+<div class="container">
+    <h2>样衣管理系统</h2>
+    <br>
+    <ul class="nav nav-tabs" role="tablist">
+        <li><a href="/home/1" data-toggle="modal">过去一天</a></li>
+        <li><a href="/home/2" data-toggle="modal">过去两天</a></li>
+        <li><a href="/home/7" data-toggle="modal">过去七天</a></li>
+        <li><a href="/home/30" data-toggle="modal">过去一月</a></li>
+        <li><a href="/home/365" data-toggle="modal">过去一年</a></li>
+
+        <li class="dropdown pull-right"><a href="#"
+                                           data-toggle="dropdown" class="dropdown-toggle">管理<strong
+                class="caret"></strong></a>
+            <ul class="dropdown-menu">
+<!--                <li><a href="/artist">人员管理</a></li>-->
+                <li><a href="#" data-toggle="modal" data-target="#AddmanModal">添加人员</a></li>
+                <li><a href="#" data-toggle="modal" data-target="#EditmanModal">删除人员</a></li>
+<!--                <div sec:authorize="hasAnyAuthority('admin')">-->
+<!--                    This content is only shown to administrators.-->
+<!--                </div>-->
+                <li class="divider"></li>
+                <li><a href="/logout">注销</a></li>
+            </ul>
+        </li>
+    </ul>
+    <div class="modal fade" id="AddmanModal" tabindex="-1" role="dialog" aria-labelledby="AddmanModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="AddmanModalLabel">添加人员</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addman-modal-form">
+                        <div class="form-group">
+                            <label for="newManName" class="form-control-label">姓名</label>
+                            <div class="controls">
+                                <input type="text" class="form-control" id="newManName" name="name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="manPowerType" class="form-control-label">人员类型</label>
+                            <select  class="form-control" id="manPowerType" name="type">
+                                <option  th:each="manPowerType:${manPowerTypes}" th:value = "${manPowerType}" th:text = "${manPowerType}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary" name="newManSub" id="newManSub">确认</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="EditmanModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">人员管理</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <button id="remove" class="btn btn-danger" disabled>删除</button>
+
+                    <table id="ManTable" data-toolbar="#remove">
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="refresh">刷新</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div id="querybar">
+        <div class="form-inline" role="form" id="querytoolbar">
+            <div class="form-group">
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
+                </button>
+                <select name="dateCriteria"
+                        class="form-control">
+                    <option value="createDate" selected>入库时间</option>
+                    <option value="saleDate">出库时间</option>
+                </select>
+
+            </div>
+            <div class="form-group form-group">
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                </button>
+                <input name="startDate" class="form-control"
+                       type="text" id="startDate" th:value="${startDate}">
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                </button>
+                <input name="endDate" class="form-control"
+                       type="text" id="endDate" th:placeholder=${endDate}>
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                </button>
+                <select name="type" class="form-control" type="text">
+                    <option value="">请选择</option>
+                    <option  th:each="jacketType:${jacketTypes}" th:value = "${jacketType}" th:text = "${jacketType}">
+                    </option>
+                </select>
+
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                </button>
+                <input name="keyword" class="form-control" type="text"
+                       placeholder="张三">
+            </div>
+
+            <div class="form-group">
+                <button id="ok" type="submit" class="btn btn-default">查询</button>
+            </div>
+
+        </div>
+        <div id="toolbar">
+
+            <button id="delbtn" class="btn  btn-primary">删除</button>
+
+            <button id="addbtn" class="btn  btn-success" data-toggle="modal" data-target="#newJacketModal">
+                新增样衣
+            </button>
+            <div class="modal fade" id="newJacketModal" tabindex="-1" role="dialog" aria-labelledby="newJacketModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="newJacketModalLabel">新增样衣</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="modal-form">
+                                <div class="form-group">
+                                    <label for="jacketId" class="form-control-label">样衣编号</label>
+                                    <input type="text" class="form-control" id="jacketId" name="jacketId">
+                                </div>
+                                <div class="form-group">
+                                    <label for="type" class="form-control-label">样衣类型</label>
+                                    <select  class="form-control" id="type" name="type">
+                                        <option  th:each="jacketType:${jacketTypes}" th:value = "${jacketType}" th:text = "${jacketType}">
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="createDate" class="form-control-label">入库日期</label>
+                                    <input type="text" class="form-control" id="createDate" name="createDate" th:value="${today}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="designer" class="form-control-label">设计师</label>
+                                    <select  class="form-control" id="designer" name="designer">
+                                        <option   th:each="designer:${designers}"  th:value="${designer}"
+                                                  th:text="${designer}" ></option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editor" class="form-control-label">版师</label>
+                                    <select  class="form-control" id="editor" name="editor">
+                                        <option   th:each="editor:${editors}"  th:value="${editor}"
+                                                  th:text="${editor}" ></option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tailor" class="form-control-label">样衣师</label>
+                                    <select  class="form-control" id="tailor" name="sample">
+                                        <option   th:each="tailor:${tailors}"  th:value="${tailor}"
+                                                  th:text="${tailor}" ></option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary" id="subsample">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table id="table"
+           data-toolbar="#toolbar"
+           data-search="true"
+           data-editable-emptytext="-"
+           data-query-params="queryParams">
+    </table>
+
+    <br>
+</div>
+
+
+<script type="text/javascript">
+//New Jacket Close
+ $('#newJacketModal').on('hidden.bs.modal', function(){
+   $("#newJacketModal").removeData("bs.modal");
+   $("#modal-form").data("bootstrapValidator").resetForm(true);
+   $("#modal-form").data('bootstrapValidator').destroy();
+   $('#modal-form').data('bootstrapValidator',null);
+   newJacketFormValidator();
+ });
+
+
+//New Jacket Validation
+function newJacketFormValidator(){
+        $('#modal-form').bootstrapValidator({
+　　　　　　　　message: 'This value is not valid',
+            　feedbackIcons: {
+                　　　　　　　　valid: 'glyphicon glyphicon-ok',
+                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+            　　　　　　　　   },
+            fields: {
+                jacketId: {
+                    message: '样衣编号验证失败',
+                    validators: {
+                        notEmpty: {
+                            message: '样衣编号不能为空'
+                        },
+						stringLength : {
+							min : 2,
+							message : '样衣编号长度必须大于2'
+						},
+						regexp: {
+                            regexp: /^[a-zA-Z0-9_\.\-]+$/,
+                            message: '样衣编号只能是字母数字和-的组合'
+						 },
+                        remote: {
+                            type: 'POST',
+                            contentType: 'application/json;charset=utf-8',
+                            url: '/jacket/ValidateJacketId',
+                            dataType: 'json',
+                            data: JSON.stringify({
+                                jacketId:  $('#jacketId').val()
+                            }),
+                            delay: 300,
+                            message: '样衣编号重复'
+                        }
+                    }
+                }
+            }
+        });
+    };
+
+
+
+//New jacket Submission
+$(document).ready(function(){
+newJacketFormValidator();
+newManPowerFormValidator();
+
+$("#subsample").click(function(e){
+if($('#modal-form').data('bootstrapValidator').isValid()){
+    var params = {};
+    $('#modal-form').find('input[id]').each(function () {
+        params[$(this).attr('id')] = $(this).val();
+    });
+   $('#modal-form').find('select[id]').each(function () {
+        params[$(this).attr('id')] = $(this).val();
+    });
+     $.ajax({
+                url: "/jacket/AddJacket",
+                contentType: "application/json;charset=utf-8",
+                dataType : 'json',
+                type: "POST",
+                data : JSON.stringify(params),
+                success: function(data){
+                    $("#modal-form").data("bootstrapValidator").resetForm(true);
+                    $("#newJacketModal").modal('hide');
+                    var $parent =  $('#table');
+                     $parent.bootstrapTable('refresh');
+                },
+                error:function(){
+                    alert("出错了");
+                    $("#modal-form").data("bootstrapValidator").resetForm(true);
+                    $("#newJacketModal").modal('hide');
+                }
+            });
+     }else{
+		alert("校验失败");}
+	}
+ );
+
+});
+
+
+
+var $calendar = {
+  	language: 'zh-CN',
+      format: "yyyy-mm-dd",
+      autoclose: true,
+      todayBtn: true,
+      minView: 'month'
+  };
+  $("#startDate").datetimepicker($calendar);
+  $("#endDate").datetimepicker($calendar);
+  $("#createDate").datetimepicker($calendar);
+
+
+function queryParams(_params) {
+    var params = {};
+
+    $('#querybar').find('input[name]').each(function () {
+        params[$(this).attr('name')] = $(this).val();
+    });
+    $('#querybar').find('select[name]').each(function () {
+        params[$(this).attr('name')] = $(this).val();
+    });
+
+    return params;
+}
+
+function responseHandler(res) {
+    return res.rows;
+}
+
+
+</script>
+
+<div th:switch="${#authorization.expression('hasAnyAuthority(''admin'')')}">
+    <script th:case="true" src="/admin/jackettableeditable.js"> </script>
+    <script th:case="false" src="/js/jackettable.js"> </script>
+</div>
+
+<script src="/js/mantable.js"></script>
+
+<script>
+var $table = $('#table');
+
+var $ok = $('#ok');
+$(function () {
+    $ok.click(function () {
+        $table.bootstrapTable('refresh');
+    });
+});
+</script>
+
+<script>
+var $delbutton = $('#delbtn');
+$delbutton.click(function () {
+    var ids =  $.map($table.bootstrapTable('getSelections'), function (row) {
+        return row.jacketId;
+    });
+    if(ids.length==0){
+        alert("请至少选择一条数据");
+        return;
+    }
+    if(confirm("确认删除吗?")){
+        $.ajax({
+        type : "post",
+        url:'/jacket/DeleteJacket?jacketId='+ ids.join(','),
+        data:{
+             json:JSON.stringify(ids)
+         },
+        dataType:'json',
+        success:function(data) {
+	    $table.bootstrapTable('remove', {
+            field: 'jacketId',
+            values: ids
+        });
+         }
+    });
+  }
+});
+</script>
+<script>
+ $('#AddmanModal').on('hidden.bs.modal', function(){
+   $("#AddmanModal").removeData("bs.modal");
+   $("#addman-modal-form").data("bootstrapValidator").resetForm(true);
+   $("#addman-modal-form").data('bootstrapValidator').destroy();
+   $("#addman-modal-form").data('bootstrapValidator',null);
+   newManPowerFormValidator();
+ });
+
+function newManPowerFormValidator(){
+	$('#addman-modal-form').bootstrapValidator({
+　　　　　　　　message: 'This value is not valid',
+		　feedbackIcons: {
+			　　　　　　　　valid: 'glyphicon glyphicon-ok',
+			　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+			　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+		　　　　　　　　   },
+		fields: {
+			name: {
+				message: '人员姓名验证失败',
+				validators: {
+					notEmpty: {
+						message: '姓名不能为空'
+					},
+					stringLength : {
+						min : 2,
+						message : '姓名长度必须大于2'
+					},
+					remote: {
+						type: 'POST',
+						contentType: 'application/json;charset=utf-8',
+						url: '/manpower/ValidateMan',
+						dataType: 'json',
+						data: JSON.stringify({
+							name:  $('#newManName').val()
+						}),
+						delay: 300,
+						message: '姓名已存在'
+					}
+				}
+			}
+		}
+	});
+};
+
+$("#newManSub").click(function(e){
+if($('#addman-modal-form').data('bootstrapValidator').isValid()){
+    var params = {};
+    var optionText;
+    var index;
+    $('#addman-modal-form').find('input[name]').each(function () {
+        params[$(this).attr('name')] = $(this).val();
+        optionText = $(this).val();
+    });
+   $('#addman-modal-form').find('select[name]').each(function () {
+        params[$(this).attr('name')] = $(this).val();
+        index = $(this).attr('selectedIndex');
+    });
+     $.ajax({
+                url: "/manpower/AddManPower",
+                contentType: "application/json;charset=utf-8",
+                dataType : 'json',
+                type: "POST",
+                data : JSON.stringify(params),
+                success: function(data){
+                    $("#addman-modal-form").data("bootstrapValidator").resetForm(true);
+                    $("#AddmanModal").modal('hide');
+                    //let newOption = new Option('Option Text','Option Value');
+                    console.log(index);
+                    console.log(optionText);
+                },
+                error:function(){
+                    alert("出错了");
+                    $("#addman-modal-form").data("bootstrapValidator").resetForm(true);
+                    $("#AddmanModal").modal('hide');
+                }
+            });
+     }else{
+		alert("校验失败");}
+	}
+);
+
+</script>
+<script>
+var $mantable = $('#ManTable')
+var $remove = $('#remove')
+var $refresh = $('#refresh')
+$(function() {
+    $refresh.click(function () {
+      $mantable.bootstrapTable('refresh')
+    })
+  })
+
+$(function() {
+  $mantable.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+      $remove.prop('disabled', !$mantable.bootstrapTable('getSelections').length)
+    })
+    $remove.click(function () {
+      var ids = $.map($mantable.bootstrapTable('getSelections'), function (row) {
+        return row.name
+      })
+
+		if(confirm("确认删除吗?")){
+			$.ajax({
+			    type : "post",
+				url:'/manpower/DeleteManPower?names='+ ids.join(','),
+				data:{
+					 json:JSON.stringify(ids)
+				 },
+				dataType:'json',
+				success:function(data) {
+				      $mantable.bootstrapTable('uncheckAll')
+					  $mantable.bootstrapTable('remove', {
+						field: 'name',
+						values: ids
+					  })
+					  $remove.prop('disabled', true)
+
+				 }
+			})
+	  }
+
+    })
+})
+</script>
+</body>
+</html>
