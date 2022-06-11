@@ -303,7 +303,41 @@ function newJacketFormValidator(){
         });
     };
 
-
+function newManPowerFormValidator(){
+	$('#addman-modal-form').bootstrapValidator({
+　　　　　　　　message: 'This value is not valid',
+		　feedbackIcons: {
+			　　　　　　　　valid: 'glyphicon glyphicon-ok',
+			　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+			　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+		　　　　　　　　   },
+		fields: {
+			name: {
+				message: '人员姓名验证失败',
+				validators: {
+					notEmpty: {
+						message: '姓名不能为空'
+					},
+					stringLength : {
+						min : 2,
+						message : '姓名长度必须大于2'
+					},
+					remote: {
+						type: 'POST',
+						contentType: 'application/json;charset=utf-8',
+						url: '/manpower/ValidateMan',
+						dataType: 'json',
+						data: JSON.stringify({
+							name:  $('#newManName').val()
+						}),
+						delay: 300,
+						message: '姓名已存在'
+					}
+				}
+			}
+		}
+	});
+};
 
 //New jacket Submission
 $(document).ready(function(){
@@ -378,11 +412,11 @@ function responseHandler(res) {
 
 </script>
 
-<div th:switch="${#authorization.expression('hasAnyAuthority(''admin'')')}">
-    <script th:case="true" src="/admin/jackettableeditable.js"> </script>
-    <script th:case="false" src="/js/jackettable.js"> </script>
-</div>
-
+<!--<div th:switch="${#authorization.expression('hasAnyAuthority(''admin'')')}">-->
+<!--    <script th:case="true" src="/admin/jackettableeditable.js"> </script>-->
+<!--    <script th:case="false" src="/js/jackettable.js"> </script>-->
+<!--</div>-->
+<script src="/admin/jackettableeditable.js"> </script>
 <script src="/js/mantable.js"></script>
 
 <script>
@@ -433,41 +467,7 @@ $delbutton.click(function () {
    newManPowerFormValidator();
  });
 
-function newManPowerFormValidator(){
-	$('#addman-modal-form').bootstrapValidator({
-　　　　　　　　message: 'This value is not valid',
-		　feedbackIcons: {
-			　　　　　　　　valid: 'glyphicon glyphicon-ok',
-			　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-			　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-		　　　　　　　　   },
-		fields: {
-			name: {
-				message: '人员姓名验证失败',
-				validators: {
-					notEmpty: {
-						message: '姓名不能为空'
-					},
-					stringLength : {
-						min : 2,
-						message : '姓名长度必须大于2'
-					},
-					remote: {
-						type: 'POST',
-						contentType: 'application/json;charset=utf-8',
-						url: '/manpower/ValidateMan',
-						dataType: 'json',
-						data: JSON.stringify({
-							name:  $('#newManName').val()
-						}),
-						delay: 300,
-						message: '姓名已存在'
-					}
-				}
-			}
-		}
-	});
-};
+
 
 $("#newManSub").click(function(e){
 if($('#addman-modal-form').data('bootstrapValidator').isValid()){
