@@ -2,10 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="author" content="">
+
     <link rel="icon" href="/img/favicon.ico"/>
 
     <!-- Bootstrap core CSS -->
@@ -26,8 +28,19 @@
           href="/css/bootstrap-theme.min.css" th:href="@{/css/bootstrap-theme.min.css}"/>
     <link rel="stylesheet" type="text/css" href="/css/datetimepicker.css" th:href="@{/css/datetimepicker.css}"/>
     <link rel="stylesheet" type="text/css" href="/css/bootstrapValidator.css" th:href="@{/css/bootstrapValidator.css}"/>
+
     <title>样衣管理系统</title>
+
 </head>
+<!--<script src="/js/keycloak.js"></script>-->
+<!--<script>-->
+<!--        var keycloak = Keycloak({url: 'http://localhost:8180/auth',realm: 'SpringBootKeycloak',clientId: 'login-app'});-->
+<!--        keycloak.init({onLoad: 'login-required'}).success(function(authenticated) {-->
+<!--            alert(authenticated ? 'authenticated' : 'not authenticated');-->
+<!--        }).error(function() {-->
+<!--            alert('failed to initialize');-->
+<!--        });-->
+<!--</script>-->
 <script src="/js/jquery.min.js"></script>
 <script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap/bootstrap.min.js"></script>
@@ -39,7 +52,7 @@
 <script src="/js/bootstrap/bootstrap-datetimepicker.js"></script>
 <script src="/js/bootstrap/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/js/bootstrap/bootstrapValidator.js"></script>
-<body>
+<body onload="initKeycloak()">
 <div class="container">
     <h2>样衣管理系统</h2>
     <br>
@@ -57,9 +70,10 @@
 <!--                <li><a href="/artist">人员管理</a></li>-->
                 <li><a href="#" data-toggle="modal" data-target="#AddmanModal">添加人员</a></li>
                 <li><a href="#" data-toggle="modal" data-target="#EditmanModal">删除人员</a></li>
-<!--                <div sec:authorize="hasAnyAuthority('admin')">-->
-<!--                    This content is only shown to administrators.-->
-<!--                </div>-->
+                <li><span sec:authentication="name"></span></li>
+                <div sec:authorize="hasAnyAuthority('admin')">
+                    This content is only shown to administrators.
+                </div>
                 <li class="divider"></li>
                 <li><a href="/logout">注销</a></li>
             </ul>
@@ -153,9 +167,9 @@
                 <button type="button" class="btn btn-default" aria-label="Left Align">
                     <span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
                 </button>
-                <select name="type" class="form-control" type="text">
+                <select name="status" class="form-control" type="text">
                     <option value="">请选择</option>
-                    <option  th:each="jacketType:${jacketTypes}" th:value = "${jacketType}" th:text = "${jacketType}">
+                    <option  th:each="jacketStat:${jacketStatus}" th:value = "${jacketStat}" th:text = "${jacketStat}">
                     </option>
                 </select>
 
@@ -264,13 +278,13 @@
 
 //New Jacket Validation
 function newJacketFormValidator(){
-        $('#modal-form').bootstrapValidator({
-　　　　　　　　message: 'This value is not valid',
-            　feedbackIcons: {
-                　　　　　　　　valid: 'glyphicon glyphicon-ok',
-                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-            　　　　　　　　   },
+    $('#modal-form').bootstrapValidator({
+　　　　　　message: 'This value is not valid',
+        　feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
             fields: {
                 jacketId: {
                     message: '样衣编号验证失败',
@@ -305,7 +319,7 @@ function newJacketFormValidator(){
 
 function newManPowerFormValidator(){
 	$('#addman-modal-form').bootstrapValidator({
-　　　　　　　　message: 'This value is not valid',
+　　　　　　message: 'This value is not valid',
 		　feedbackIcons: {
 			　　　　　　　　valid: 'glyphicon glyphicon-ok',
 			　　　　　　　　invalid: 'glyphicon glyphicon-remove',
@@ -444,6 +458,7 @@ $delbutton.click(function () {
         $.ajax({
         type : "post",
         url:'/jacket/DeleteJacket?jacketId='+ ids.join(','),
+        contentType: "application/json;charset=utf-8",
         data:{
              json:JSON.stringify(ids)
          },

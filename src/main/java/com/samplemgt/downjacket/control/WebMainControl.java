@@ -1,10 +1,13 @@
 package com.samplemgt.downjacket.control;
 
+import com.samplemgt.downjacket.service.JacketStatusService;
 import com.samplemgt.downjacket.service.JacketTypeService;
 import com.samplemgt.downjacket.service.ManPowerService;
 import com.samplemgt.downjacket.service.ManPowerTypeService;
+import org.keycloak.KeycloakSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,11 +20,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import com.samplemgt.downjacket.entity.ManPowerType;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 public class WebMainControl {
 
     @Autowired
-    JacketTypeService jacketTypeService;
+    JacketStatusService jacketStatusService;
 
     @Autowired
     ManPowerService manPowerService;
@@ -29,6 +34,8 @@ public class WebMainControl {
     @Autowired
     ManPowerTypeService manPowerTypeService;
 
+    @Autowired
+    JacketTypeService jacketTypeService;
 
     @RequestMapping(value = {"/home","/home/{offset}"}, method = RequestMethod.GET)
     public String homePage(Model model, @PathVariable(value="offset",required = false) String offset) {
@@ -44,8 +51,11 @@ public class WebMainControl {
         String today =  currentDate.format(formatter);
         String startDate = previousDate.format(formatter);
 
+        List<String> jacketStatus = jacketStatusService.findAllJacketStatus().stream()
+                                    .map(x -> x.getStatus()).collect(Collectors.toList());
+
         List<String> jacketTypes = jacketTypeService.findAllJacketType().stream()
-                                    .map(x -> x.getType()).collect(Collectors.toList());
+                                    .map(x-> x.getType()).collect(Collectors.toList());
 
         List<ManPowerType> manPowerTypes = manPowerTypeService.findAllManPowerType();
 
@@ -75,9 +85,10 @@ public class WebMainControl {
                                             .map(x -> x.getType()).collect(Collectors.toList());
 
         model.addAttribute("manPowerTypes",manPowerTypeStrings);
+        model.addAttribute("jacketTypes",jacketTypes);
         model.addAttribute("endDate", today);
         model.addAttribute("startDate", startDate);
-        model.addAttribute("jacketTypes", jacketTypes);
+        model.addAttribute("jacketStatus", jacketStatus);
         model.addAttribute("editors", editors);
         model.addAttribute("designers", designers);
         model.addAttribute("tailors", tailors);
@@ -85,6 +96,10 @@ public class WebMainControl {
         return "home";
     }
 
+//    private final HttpServletRequest request;
+//    private KeycloakSecurityContext getKeycloakSecurityContext() {
+//        return (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
+//    }
 
 //    @RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
 //    public String loginPage(Model model) {

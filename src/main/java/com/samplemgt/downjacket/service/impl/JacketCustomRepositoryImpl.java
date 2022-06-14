@@ -90,7 +90,7 @@ public class JacketCustomRepositoryImpl implements JacketCustomRepository {
     @Override
     public List<Jacket> findJacketByProperties(CustomJacketReq req)  {
         String dateCrit = req.dateCriteria;
-        String typeCrit = "type";
+        String statusCrit = "status";
         Date from = new Date();
         Date to = new Date();
 
@@ -123,8 +123,8 @@ public class JacketCustomRepositoryImpl implements JacketCustomRepository {
             query.addCriteria(Criteria.where(dateCrit).gt(from));
         }
 
-        if (!req.type.isEmpty()){
-            query.addCriteria(Criteria.where(typeCrit).is(req.type));
+        if (!req.status.isEmpty()){
+            query.addCriteria(Criteria.where(statusCrit).is(req.status));
         }
 
         List<Jacket> jackets = mongoTemplate.find(query, Jacket.class);

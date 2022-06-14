@@ -59,7 +59,7 @@ public class Jacket {
     @Field("saleDate")
     public Date saleDate;
 
-    @TextIndexed(weight=5)
+
     @JsonProperty("comment")
     @Field("comment")
     public String comment;

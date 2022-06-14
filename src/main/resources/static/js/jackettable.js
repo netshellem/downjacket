@@ -154,7 +154,6 @@ $(function (){
 			},
 			{
 				field: 'saleDate',
-				sortable: false,
 				searchable: false,
 				editable: {
 					type: 'datetime',
@@ -169,7 +168,26 @@ $(function (){
 						}
 
 				 },
-				title: '出库时间'
+				title: '出库时间',
+                sortable: true,
+                sorter: function(a,b){
+                    if (a == null) return -1;
+                    if (b == null) return 1;
+                    var tmp1 = a.substring(0,4);
+                    var tmp2 = b.substring(0,4);
+                    if (tmp1 > tmp2) return 1;
+                    if (tmp1 < tmp2) return -1;
+                    n1 = a.substring(5,7);
+                    n2 = b.substring(5,7);
+                    if (n1 > n2) return 1;
+                    if (n1 < n2) return -1;
+
+                    n1 = a.substring(8);
+                    n2 = b.substring(8);
+                    if (n1 > n2) return 1;
+                    if (n1 < n2) return -1;
+                    return 0;
+                }
 
 			},
 			{

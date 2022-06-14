@@ -8,4 +8,6 @@ public interface JacketStatusService {
 
     public List<JacketStatus> findAllJacketStatus();
     public JacketStatus save(JacketStatus status);
+
+    public JacketStatus getDefaultStatus();
 }

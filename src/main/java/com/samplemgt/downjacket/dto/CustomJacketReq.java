@@ -19,8 +19,8 @@ public class CustomJacketReq {
     @JsonProperty("endDate")
     public String endDate;
 
-    @JsonProperty("type")
-    public String type;
+    @JsonProperty("status")
+    public String status;
 
     @JsonProperty("dateCriteria")
     public String dateCriteria;

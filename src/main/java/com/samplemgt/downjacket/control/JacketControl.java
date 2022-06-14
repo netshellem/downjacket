@@ -59,15 +59,18 @@ public class JacketControl {
     @Value("${keycloak.realm}")
     private String realm;
 
-
     @ApiOperation(value = "Add one Sample DownJacket")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"), @ApiResponse(code = 500, message = "InternalServerError")})
     @RequestMapping(value = "/jacket/AddJacket", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Jacket save(@RequestBody Jacket jacket) {
         Date today = new Date();
-        if (jacket.createDate == null) jacket.createDate = today;
-
+        if (jacket.createDate == null)
+            jacket.createDate = today;
+        if (jacket.status == null)
+        if (jacket.status == null)
+            jacket.status = jacketStatusService.getDefaultStatus().status;
+        jacket.jacketId = jacket.jacketId.toUpperCase();
         return jacketService.save(jacket);
     }
 
@@ -94,6 +97,7 @@ public class JacketControl {
         return types.stream().map(x -> x.getType()).collect(Collectors.toList());
     }
 
+
     @ApiOperation(value = "get all DownJacket status")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"), @ApiResponse(code = 500, message = "InternalServerError")})
     @RequestMapping(value = "/admin/GetJacketStatus", method = RequestMethod.GET)
@@ -107,6 +111,7 @@ public class JacketControl {
                 .collect(Collectors.toList());
     }
 
+
     @ApiOperation(value = "Add one man")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"), @ApiResponse(code = 500, message = "InternalServerError")})
     @RequestMapping(value = "/admin/AddJacketAttribute", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -114,6 +119,7 @@ public class JacketControl {
     public JacketAttribute save(@RequestBody JacketAttribute attribute) {
         return jacketAttributeService.save(attribute);
     }
+
 
     @ApiOperation(value = "get all DownJacket Attribute")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"), @ApiResponse(code = 500, message = "InternalServerError")})
@@ -127,6 +133,8 @@ public class JacketControl {
                 .map(x -> new JacketAttributeResp(x, x))
                 .collect(Collectors.toList());
     }
+
+
 
 
     @ApiOperation(value = "Update Down Jacket")
@@ -153,6 +161,7 @@ public class JacketControl {
     }
 
 
+
     @RequestMapping(value = "/jacket/DeleteJacket", method = RequestMethod.POST)
     public boolean DeleteJacket(@RequestParam(value = "jacketId", required = true) String ids) {
         String[] jacketIds = ids.split(",");
@@ -162,6 +171,7 @@ public class JacketControl {
 
         return true;
     }
+
 
     @RequestMapping("/logout")
     void logout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

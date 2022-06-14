@@ -23,4 +23,9 @@ public class JacketStatusServiceImpl implements JacketStatusService {
     public JacketStatus save(JacketStatus status) {
         return jacketStatusRepository.save(status);
     }
+
+    @Override
+    public JacketStatus getDefaultStatus() {
+        return jacketStatusRepository.findByIndex("1").get();//storage
+    }
 }
