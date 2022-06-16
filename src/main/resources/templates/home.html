@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <html>
 
 <head>
@@ -32,15 +31,7 @@
     <title>样衣管理系统</title>
 
 </head>
-<!--<script src="/js/keycloak.js"></script>-->
-<!--<script>-->
-<!--        var keycloak = Keycloak({url: 'http://localhost:8180/auth',realm: 'SpringBootKeycloak',clientId: 'login-app'});-->
-<!--        keycloak.init({onLoad: 'login-required'}).success(function(authenticated) {-->
-<!--            alert(authenticated ? 'authenticated' : 'not authenticated');-->
-<!--        }).error(function() {-->
-<!--            alert('failed to initialize');-->
-<!--        });-->
-<!--</script>-->
+
 <script src="/js/jquery.min.js"></script>
 <script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap/bootstrap.min.js"></script>
@@ -52,7 +43,7 @@
 <script src="/js/bootstrap/bootstrap-datetimepicker.js"></script>
 <script src="/js/bootstrap/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 <script src="/js/bootstrap/bootstrapValidator.js"></script>
-<body onload="initKeycloak()">
+<body>
 <div class="container">
     <h2>样衣管理系统</h2>
     <br>
@@ -70,10 +61,11 @@
 <!--                <li><a href="/artist">人员管理</a></li>-->
                 <li><a href="#" data-toggle="modal" data-target="#AddmanModal">添加人员</a></li>
                 <li><a href="#" data-toggle="modal" data-target="#EditmanModal">删除人员</a></li>
-                <li><span sec:authentication="name"></span></li>
-                <div sec:authorize="hasAnyAuthority('admin')">
-                    This content is only shown to administrators.
-                </div>
+                <li><div th:text="${#authorization}"></div></li>
+<!--                <li><span sec:authentication="{name}"></span></li>-->
+<!--                <div sec:authorize="hasAnyAuthority('admin')">-->
+<!--                    This content is only shown to administrators.-->
+<!--                </div>-->
                 <li class="divider"></li>
                 <li><a href="/logout">注销</a></li>
             </ul>
@@ -426,11 +418,11 @@ function responseHandler(res) {
 
 </script>
 
-<!--<div th:switch="${#authorization.expression('hasAnyAuthority(''admin'')')}">-->
-<!--    <script th:case="true" src="/admin/jackettableeditable.js"> </script>-->
-<!--    <script th:case="false" src="/js/jackettable.js"> </script>-->
-<!--</div>-->
-<script src="/admin/jackettableeditable.js"> </script>
+<div th:switch="${admin}">
+    <script th:case="true" src="/admin/jackettableeditable.js"> </script>
+    <script th:case="false" src="/js/jackettable.js"></script>
+</div>
+
 <script src="/js/mantable.js"></script>
 
 <script>
