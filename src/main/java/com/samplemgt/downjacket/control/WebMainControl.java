@@ -4,7 +4,6 @@ import com.samplemgt.downjacket.service.JacketStatusService;
 import com.samplemgt.downjacket.service.JacketTypeService;
 import com.samplemgt.downjacket.service.ManPowerService;
 import com.samplemgt.downjacket.service.ManPowerTypeService;
-import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import com.samplemgt.downjacket.entity.ManPowerType;
 
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class WebMainControl {
@@ -86,8 +84,6 @@ public class WebMainControl {
 
         List<String> manPowerTypeStrings = manPowerTypes.stream()
                                             .map(x -> x.getType()).collect(Collectors.toList());
-
-        model.addAttribute("principal", principal);
 
         model.addAttribute("manPowerTypes",manPowerTypeStrings);
         model.addAttribute("jacketTypes",jacketTypes);

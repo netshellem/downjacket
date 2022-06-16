@@ -58,14 +58,9 @@
                                            data-toggle="dropdown" class="dropdown-toggle">管理<strong
                 class="caret"></strong></a>
             <ul class="dropdown-menu">
-<!--                <li><a href="/artist">人员管理</a></li>-->
                 <li><a href="#" data-toggle="modal" data-target="#AddmanModal">添加人员</a></li>
                 <li><a href="#" data-toggle="modal" data-target="#EditmanModal">删除人员</a></li>
-                <li><div th:text="${#authorization}"></div></li>
-<!--                <li><span sec:authentication="{name}"></span></li>-->
-<!--                <div sec:authorize="hasAnyAuthority('admin')">-->
-<!--                    This content is only shown to administrators.-->
-<!--                </div>-->
+
                 <li class="divider"></li>
                 <li><a href="/logout">注销</a></li>
             </ul>

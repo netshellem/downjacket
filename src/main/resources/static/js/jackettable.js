@@ -173,36 +173,6 @@ $(function (){
 				searchable: true,
 				title: '备注'
 			}]
-//			onEditableSave: function (field, row, oldValue, $el) {
-//				$('#table').bootstrapTable('resetView');
-//				$.ajax({
-//					type: "post",
-//					url: "/jacket/UpdateJacket",
-//					contentType: "application/json;charset=utf-8",
-//					dataType : 'json',
-//					data:JSON.stringify(row) ,
-//					success: function (data, status) {
-//						if (status == "success") {
-//							alert('提交数据成功');
-//						}
-//					},
-//					error: function () {
-//						alert('编辑失败');
-//						console.log($el);
-//						console.log(oldValue);
-//						if ("undefined" === typeof oldValue) {
-//							console.log("oldValue is undefined");
-//							oldValue = '-';
-//						}
-//						$el[0].innerText = oldValue;
-//
-//					},
-//					complete: function () {
-//
-//					}
-//
-//				});
-//			}
 	});
 
 	}
