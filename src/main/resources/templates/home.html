@@ -475,15 +475,18 @@ $("#newManSub").click(function(e){
 if($('#addman-modal-form').data('bootstrapValidator').isValid()){
     var params = {};
     var optionText;
-    var index;
+
+    var index = $( "#manPowerType option:selected" ).index();
+
     $('#addman-modal-form').find('input[name]').each(function () {
         params[$(this).attr('name')] = $(this).val();
         optionText = $(this).val();
     });
    $('#addman-modal-form').find('select[name]').each(function () {
         params[$(this).attr('name')] = $(this).val();
-        index = $(this).attr('selectedIndex');
     });
+
+
      $.ajax({
                 url: "/manpower/AddManPower",
                 contentType: "application/json;charset=utf-8",
@@ -493,9 +496,18 @@ if($('#addman-modal-form').data('bootstrapValidator').isValid()){
                 success: function(data){
                     $("#addman-modal-form").data("bootstrapValidator").resetForm(true);
                     $("#AddmanModal").modal('hide');
-                    //let newOption = new Option('Option Text','Option Value');
-                    console.log(index);
-                    console.log(optionText);
+                    switch (index) {
+                        case 0:
+                           $('#editor').append($('<option>').val(optionText).text(optionText));
+                           break;
+                        case 1:
+                           $('#designer').append($('<option>').val(optionText).text(optionText));
+                           break;
+                        case 1:
+                           $('#tailor').append($('<option>').val(optionText).text(optionText));
+                           break;
+
+                    };
                 },
                 error:function(){
                     alert("出错了");
@@ -544,6 +556,26 @@ $(function() {
 					  })
 					  $remove.prop('disabled', true)
 
+                        $.each(ids, function(index,value) {
+
+                            $('#editor option').each(function() {
+                                if ( $(this).val() === value ) {
+                                    $(this).remove();
+                                }
+                            });
+
+                            $('#designer option').each(function() {
+                                if ( $(this).val() === value ) {
+                                    $(this).remove();
+                                }
+                            });
+
+                            $('#tailor option').each(function() {
+                                if ( $(this).val() === value ) {
+                                    $(this).remove();
+                                }
+                            });
+                        });
 				 }
 			})
 	  }
