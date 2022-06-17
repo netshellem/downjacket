@@ -225,7 +225,7 @@ $(function (){
 				$('#table').bootstrapTable('resetView');
 				$.ajax({
 					type: "post",
-					url: "/jacket/UpdateJacket",
+					url: "/admin/UpdateJacket",
 					contentType: "application/json;charset=utf-8",
 					dataType : 'json',
 					data:JSON.stringify(row) ,

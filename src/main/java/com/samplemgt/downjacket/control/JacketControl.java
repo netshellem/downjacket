@@ -140,7 +140,7 @@ public class JacketControl {
     @ApiOperation(value = "Update Down Jacket")
     @ApiResponses(
             value = {@ApiResponse(code = 200, message = "Success"), @ApiResponse(code = 500, message = "InternalServerError")})
-    @RequestMapping(value = "/jacket/UpdateJacket", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
+    @RequestMapping(value = "/admin/UpdateJacket", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Jacket UpdateJacket(@RequestBody Jacket jacket) {
