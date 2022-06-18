@@ -1,9 +1,6 @@
 package com.samplemgt.downjacket.control;
 
-import com.samplemgt.downjacket.service.JacketStatusService;
-import com.samplemgt.downjacket.service.JacketTypeService;
-import com.samplemgt.downjacket.service.ManPowerService;
-import com.samplemgt.downjacket.service.ManPowerTypeService;
+import com.samplemgt.downjacket.service.*;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,8 +14,7 @@ import org.springframework.ui.Model;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import com.samplemgt.downjacket.entity.ManPowerType;
 
@@ -36,6 +32,9 @@ public class WebMainControl {
 
     @Autowired
     JacketTypeService jacketTypeService;
+
+    @Autowired
+    JacketService jacketService;
 
 
     @RequestMapping(value = {"/home","/home/{offset}"}, method = RequestMethod.GET)
@@ -94,7 +93,24 @@ public class WebMainControl {
         model.addAttribute("designers", designers);
         model.addAttribute("tailors", tailors);
         configCommonRoleAttributes(model);
+        configArchiveList(model);
         return "home";
+    }
+
+    private void configArchiveList(Model model){
+        Date first = jacketService.getFirstJacket().getCreateDate();
+        Calendar calendar = Calendar.getInstance();
+        int currentYear = calendar.get(Calendar.YEAR);
+        calendar.setTime(first);
+        int firstYear = calendar.get(Calendar.YEAR);
+
+        List<Integer> archiveList = new ArrayList<>();
+        int year = firstYear;
+        while(year < currentYear + 1){
+            archiveList.add(year);
+            year++;
+        }
+        model.addAttribute("archiveList", archiveList);
     }
 
     private void configCommonRoleAttributes(Model model) {

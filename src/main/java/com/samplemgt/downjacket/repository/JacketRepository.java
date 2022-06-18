@@ -15,4 +15,6 @@ public interface JacketRepository extends MongoRepository<Jacket, String> {
     public Optional<Jacket> findByJacketId(String jacketId);
 
     public Boolean existsByJacketId(String jacketId);
+
+    public Jacket findTopByOrderByCreateDateAsc();
 }

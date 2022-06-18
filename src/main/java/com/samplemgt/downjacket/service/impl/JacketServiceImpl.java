@@ -60,4 +60,9 @@ public class JacketServiceImpl implements JacketService {
         return jacketRepository.existsByJacketId(jacketID);
     }
 
+    @Override
+    public Jacket getFirstJacket(){
+        return jacketRepository.findTopByOrderByCreateDateAsc();
+    }
+
 }

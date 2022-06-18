@@ -13,7 +13,6 @@ public interface JacketService {
     public Jacket save(Jacket jacket);
     public void delete(Jacket jacket);
     public void delete(String jacketId);
-
     public Boolean existsByJacketId(String jacketId);
-
+    public Jacket getFirstJacket();
 }

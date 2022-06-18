@@ -60,8 +60,10 @@ public class JacketControl {
     private String realm;
 
     @ApiOperation(value = "Add one Sample DownJacket")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"), @ApiResponse(code = 500, message = "InternalServerError")})
-    @RequestMapping(value = "/jacket/AddJacket", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 500, message = "InternalServerError")})
+    @RequestMapping(value = "/jacket/AddJacket", method = RequestMethod.POST,
+            consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Jacket save(@RequestBody Jacket jacket) {
 
@@ -81,7 +83,8 @@ public class JacketControl {
 
 
     @ApiOperation(value = "ValidateJacketId")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"), @ApiResponse(code = 500, message = "InternalServerError")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 500, message = "InternalServerError")})
     @RequestMapping(value = "/jacket/ValidateJacketId", method = RequestMethod.POST)
     public ValidateResp validateJacketId(String jacketId) {
         ValidateResp v = new ValidateResp();
@@ -93,11 +96,11 @@ public class JacketControl {
     }
 
     @ApiOperation(value = "get all DownJacket type")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"), @ApiResponse(code = 500, message = "InternalServerError")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 500, message = "InternalServerError")})
     @RequestMapping(value = "/jacket/GetJacketType", method = RequestMethod.GET)
     @ResponseBody
     public List<String> GetAllJacketType() {
-
         List<JacketType> types = jacketTypeService.findAllJacketType();
         return types.stream().map(x -> x.getType()).collect(Collectors.toList());
     }
