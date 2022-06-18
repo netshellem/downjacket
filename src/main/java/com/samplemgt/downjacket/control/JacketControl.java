@@ -64,6 +64,11 @@ public class JacketControl {
     @RequestMapping(value = "/jacket/AddJacket", method = RequestMethod.POST, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public Jacket save(@RequestBody Jacket jacket) {
+
+        if (jacketService.existsByJacketId(
+                jacket.jacketId.toUpperCase().replace(" ", ""))) {
+            return null;
+        }
         Date today = new Date();
         if (jacket.createDate == null)
             jacket.createDate = today;
@@ -81,7 +86,7 @@ public class JacketControl {
     public ValidateResp validateJacketId(String jacketId) {
         ValidateResp v = new ValidateResp();
         v.valid = false;
-        if (!jacketService.existsByJacketId(jacketId.toLowerCase().replace(" ", ""))) {
+        if (!jacketService.existsByJacketId(jacketId.toUpperCase().replace(" ", ""))) {
             v.valid = true;
         }
         return v;
