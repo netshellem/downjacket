@@ -52,7 +52,9 @@
         <li><a href="/home/2" data-toggle="modal">过去两天</a></li>
         <li><a href="/home/7" data-toggle="modal">过去七天</a></li>
         <li><a href="/home/30" data-toggle="modal">过去一月</a></li>
-        <li><a href="/home/365" data-toggle="modal">过去一年</a></li>
+        <li th:if="${admin}"><a href="/home/365" data-toggle="modal">过去一年</a></li>
+
+
 
         <li class="dropdown pull-right"><a href="#"
                                            data-toggle="dropdown" class="dropdown-toggle">管理<strong
@@ -381,16 +383,16 @@ if($('#modal-form').data('bootstrapValidator').isValid()){
 
 
 
-var $calendar = {
-  	language: 'zh-CN',
-      format: "yyyy-mm-dd",
-      autoclose: true,
-      todayBtn: true,
-      minView: 'month'
-  };
-  $("#startDate").datetimepicker($calendar);
-  $("#endDate").datetimepicker($calendar);
-  $("#createDate").datetimepicker($calendar);
+// var $calendar = {
+//   	language: 'zh-CN',
+//       format: "yyyy-mm-dd",
+//       autoclose: true,
+//       todayBtn: true,
+//       minView: 'month',
+//   };
+//   $("#startDate").datetimepicker($calendar);
+//   $("#endDate").datetimepicker($calendar);
+//   $("#createDate").datetimepicker($calendar);
 
 
 function queryParams(_params) {
@@ -412,6 +414,10 @@ function responseHandler(res) {
 
 
 </script>
+<div th:switch="${admin}">
+    <script th:case="true" src="/admin/calendar.js"> </script>
+    <script th:case="false" src="/js/calendar.js"></script>
+</div>
 
 <div th:switch="${admin}">
     <script th:case="true" src="/admin/jackettableeditable.js"> </script>

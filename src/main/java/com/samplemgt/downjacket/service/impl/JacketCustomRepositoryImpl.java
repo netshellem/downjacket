@@ -1,5 +1,6 @@
 package com.samplemgt.downjacket.service.impl;
 
+import com.samplemgt.downjacket.Utility.Context;
 import com.samplemgt.downjacket.dto.CustomJacketReq;
 import com.samplemgt.downjacket.entity.Jacket;
 import com.samplemgt.downjacket.repository.JacketCustomRepository;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 @Service
 public class JacketCustomRepositoryImpl implements JacketCustomRepository {
@@ -109,6 +107,13 @@ public class JacketCustomRepositoryImpl implements JacketCustomRepository {
         }catch (ParseException ex){
             System.out.println("error in start date format");
         }
+
+        Calendar current =  java.util.Calendar.getInstance();
+        current.add(Calendar.DATE, -30);
+        Date previousMonthDay = current.getTime();
+
+        if (!Context.isAdmin())
+            from = from.compareTo(previousMonthDay) > 0? from : previousMonthDay ;
 
         if (!req.endDate.isEmpty()) {
             try{

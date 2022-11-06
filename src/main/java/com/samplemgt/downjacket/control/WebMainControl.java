@@ -1,5 +1,6 @@
 package com.samplemgt.downjacket.control;
 
+import com.samplemgt.downjacket.Utility.Context;
 import com.samplemgt.downjacket.service.*;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,9 @@ public class WebMainControl {
     public String homePage(Principal principal, Model model, @PathVariable(value="offset",required = false) String offset) {
         LocalDate previousDate;
         LocalDate currentDate = LocalDate.now();
-        if (offset == null) {
-            previousDate = currentDate.minusDays(300);
-        }else{
-            previousDate = currentDate.minusDays(Long.parseLong(offset));
-        }
+        previousDate = (offset == null)? currentDate.minusDays(getDefaultOffset(Context.isAdmin())):
+                currentDate.minusDays(getOffset(Context.isAdmin(),offset));
+
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String today =  currentDate.format(formatter);
@@ -97,6 +96,18 @@ public class WebMainControl {
         return "home";
     }
 
+    private long getDefaultOffset(boolean admin){
+        long offset = admin? 300:30;
+        return offset;
+    }
+
+    private long getOffset(boolean admin, String offset){
+        long off = Long.parseLong(offset);
+        if (!admin && off > 30)
+            off = 30;
+        return off;
+    }
+
     private void configArchiveList(Model model){
         Date first = jacketService.getFirstJacket().getCreateDate();
         Calendar calendar = Calendar.getInstance();
@@ -114,18 +125,8 @@ public class WebMainControl {
     }
 
     private void configCommonRoleAttributes(Model model) {
-        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken) SecurityContextHolder.getContext()
-                .getAuthentication();
-        Collection<? extends GrantedAuthority> authorities =  authentication.getAuthorities();
-        boolean isAdmin = false;
-        for (GrantedAuthority grantedAuthority : authorities){
-            if (grantedAuthority.getAuthority().toLowerCase().equals("admin")) {
-                isAdmin = true;
-                break;
-            }
-        }
 
-        model.addAttribute("admin", isAdmin);
+        model.addAttribute("admin", Context.isAdmin());
     }
 
 
