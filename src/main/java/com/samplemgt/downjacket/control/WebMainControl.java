@@ -2,10 +2,7 @@ package com.samplemgt.downjacket.control;
 
 import com.samplemgt.downjacket.Utility.Context;
 import com.samplemgt.downjacket.service.*;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.ui.Model;
 
 import java.security.Principal;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +33,9 @@ public class WebMainControl {
 
     @Autowired
     JacketService jacketService;
+
+    @Autowired
+    SeasonService seasonService;
 
 
     @RequestMapping(value = {"/home","/home/{offset}"}, method = RequestMethod.GET)
@@ -97,7 +97,12 @@ public class WebMainControl {
     }
 
     private long getDefaultOffset(boolean admin){
-        long offset = admin? 300:30;
+        LocalDate now = LocalDate.now();
+        LocalDate term = seasonService.findOneSeason().startDate.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate(); ;
+        long days =  now.toEpochDay() - term.toEpochDay();
+        long offset = admin? days:(days>30? 30: days);
         return offset;
     }
 
